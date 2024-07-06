@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Grocery Identification and Analytics</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+
+        nav {
+            background-color: #00796b;
+            color: white;
+            padding: 1em 2em;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        nav .logo {
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+
+        nav ul {
+            list-style-type: none;
+            display: flex;
+            gap: 1.5em;
+            margin: 0;
+        }
+
+        nav ul li {
+            display: inline;
+        }
+
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+        }
+
+        nav ul li a:hover {
+            text-decoration: underline;
+        }
+
+        .section {
+            padding: 2em;
+            max-width: 1200px;
+            margin: auto;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .quick-actions, .statistics, .suggestions {
+            margin-bottom: 2em;
+        }
+
+        .quick-actions button {
+            padding: 0.75em 1.5em;
+            background-color: #00796b;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            margin-right: 1em;
+            display: flex;
+            align-items: center;
+            gap: 0.5em;
+            transition: background-color 0.3s ease;
+            margin-bottom: 1em;
+        }
+
+        .quick-actions button:hover {
+            background-color: #00695c;
+        }
+
+        .upload-area, .live-feed, .identified-items, .detected-items, .overview, .category-analysis, .trends {
+            background-color: white;
+            padding: 2em;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2em;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .upload-area:hover, .live-feed:hover, .identified-items:hover, .detected-items:hover, .overview:hover, .category-analysis:hover, .trends:hover {
+            transform: translateY(-5px);
+        }
+
+        .upload-area input {
+            margin-top: 1em;
+        }
+
+        video {
+            max-width: 100%;
+            border-radius: 8px;
+        }
+
+        canvas {
+            max-width: 100%;
+        }
+
+        h1, h2 {
+            color: #00796b;
+        }
+
+        .icon {
+            margin-right: 0.5em;
+        }
+
+        .image-preview {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin-top: 1em;
+        }
+
+        .stats-card {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1em;
+            background-color: #e0f7fa;
+            border-radius: 8px;
+            margin-top: 1em;
+        }
+
+        .stats-card .icon {
+            font-size: 2em;
+        }
+
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 120px;
+            background-color: #00796b;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px 0;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -60px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="logo"><i class="fas fa-shopping-cart"></i> AI Grocery Identification</div>
+        <ul>
+            <li class="tooltip">
+                <a href="#" onclick="showSection('home')"><i class="fas fa-home icon"></i> Home</a>
+                <span class="tooltiptext">Go to Home</span>
+            </li>
+            <li class="tooltip">
+                <a href="#" onclick="showSection('upload')"><i class="fas fa-upload icon"></i> Upload Image</a>
+                <span class="tooltiptext">Upload an Image</span>
+            </li>
+            <li class="tooltip">
+                <a href="#" onclick="showSection('camera')"><i class="fas fa-camera icon"></i> Camera</a>
+                <span class="tooltiptext">Open Camera</span>
+            </li>
+            <li class="tooltip">
+                <a href="#" onclick="showSection('analytics')"><i class="fas fa-chart-bar icon"></i> Analytics</a>
+                <span class="tooltiptext">View Analytics</span>
+            </li>
+            <li class="tooltip">
+                <a href="#" onclick="showSection('settings')"><i class="fas fa-cogs icon"></i> Settings</a>
+                <span class="tooltiptext">Adjust Settings</span>
+            </li>
+            <li class="tooltip">
+                <a href="#" onclick="showSection('help')"><i class="fas fa-question-circle icon"></i> Help</a>
+                <span class="tooltiptext">Get Help</span>
+            </li>
+        </ul>
+    </nav>
+
+    <section id="home" class="section">
+        <h1>Welcome, User!</h1>
+        <div class="quick-actions">
+            <button onclick="showSection('upload')"><i class="fas fa-upload icon"></i> Upload Image</button>
+            <button onclick="showSection('camera')"><i class="fas fa-camera icon"></i> Open Camera</button>
+            <button onclick="showSection('recent')"><i class="fas fa-history icon"></i> Recent Activity</button>
+        </div>
+        <div class="statistics">
+            <h2>Statistics</h2>
+            <div class="stats-card">
+                <div>
+                    <i class="fas fa-box icon"></i>
+                    <span>Total Items Identified: 0</span>
+                </div>
+            </div>
+        </div>
+        <div class="suggestions">
+            <h2>Suggestions</h2>
+            <p><i class="fas fa-lightbulb icon"></i> Tip: Upload clear images for better accuracy.</p>
+        </div>
+    </section>
+
+    <section id="upload" class="section hidden">
+        <h1>Upload Image</h1>
+        <div class="upload-area">
+            <input type="file" id="uploadInput" onchange="previewImage(event)">
+            <button onclick="processImage()"><i class="fas fa-upload icon"></i> Upload</button>
+            <img id="imagePreview" class="image-preview hidden">
+        </div>
+        <div class="identified-items">
+            <h2>Identified Items</h2>
+            <ul id="identifiedList"></ul>
+        </div>
+    </section>
+
+    <section id="camera" class="section hidden">
+        <h1>Camera</h1>
+        <div class="live-feed">
+            <video id="video" width="640" height="480" autoplay></video>
+            <button onclick="captureImage()"><i class="fas fa-camera icon"></i> Capture</button>
+        </div>
+        <div class="detected-items">
+            <h2>Detected Items</h2>
+            <ul id="detectedList"></ul>
+        </div>
+    </section>
+
+    <section id="analytics" class="section hidden">
+        <h1>Analytics Dashboard</h1>
+        <div class="overview">
+            <h2>Overview</h2>
+            <p>Total Identifications: 0</p>
+            <p>Most Identified Items: None</p>
+        </div>
+        <div class="category-analysis">
+            <h2>Category Analysis</h2>
+            <canvas id="categoryChart"></canvas>
+        </div>
+        <div class="trends">
+            <h2>Trends</h2>
+            <canvas id="trendsChart"></canvas>
+        </div>
+        <div class="export-data">
+            <button><i class="fas fa-file-csv icon"></i> Export CSV</button>
+            <button><i class="fas fa-file-pdf icon"></i> Export PDF</button>
+        </div>
+    </section>
+
+    <section id="settings" class="section hidden">
+        <h1>Settings</h1>
+        <div class="settings-content">
+            <h2>Theme</h2>
+            <button onclick="setTheme('light')">Light Theme</button>
+            <button onclick="setTheme('dark')">Dark Theme</button>
+            <h2>Preferences</h2>
+            <!-- Add more settings options here -->
+        </div>
+    </section>
+
+    <section id="help" class="section hidden">
+        <h1>Help</h1>
+        <div class="help-content">
+            <h2>FAQs</h2>
+            <p><strong>Q:</strong> How do I upload an image?</p>
+            <p><strong>A:</strong> Click on the 'Upload Image' button and select an image file from your device.</p>
+            <p><strong>Q:</strong> How do I use the camera feature?</p>
+            <p><strong>A:</strong> Click on the 'Camera' button to access your webcam and capture images.</p>
+            <!-- Add more FAQs here -->
+            <h2>Contact Us</h2>
+            <form>
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+                <label for="message">Message:</label>
+                <textarea id="message" name="message" rows="4" required></textarea>
+                <button type="submit">Submit</button>
+            </form>
+        </div>
+    </section>
+
+    <script>
+        function showSection(sectionId) {
+            const sections = document.querySelectorAll('.section');
+            sections.forEach(section => {
+                if (section.id === sectionId) {
+                    section.classList.remove('hidden');
+                } else {
+                    section.classList.add('hidden');
+                }
+            });
+        }
+
+        function processImage() {
+            const uploadInput = document.getElementById('uploadInput');
+            const identifiedList = document.getElementById('identifiedList');
+            
+            // Dummy processing, replace with actual image processing logic
+            if (uploadInput.files.length > 0) {
+                const fileName = uploadInput.files[0].name;
+                const listItem = document.createElement('li');
+                listItem.textContent = `Identified Item: ${fileName}`;
+                identifiedList.appendChild(listItem);
+            }
+        }
+
+        function captureImage() {
+            const detectedList = document.getElementById('detectedList');
+            
+            // Dummy detection, replace with actual live detection logic
+            const listItem = document.createElement('li');
+            listItem.textContent = `Detected Item: Example Item`;
+            detectedList.appendChild(listItem);
+        }
+
+        function previewImage(event) {
+            const imagePreview = document.getElementById('imagePreview');
+            imagePreview.src = URL.createObjectURL(event.target.files[0]);
+            imagePreview.classList.remove('hidden');
+        }
+
+        function setTheme(theme) {
+            if (theme === 'light') {
+                document.body.style.backgroundColor = '#f4f4f4';
+                document.body.style.color = '#333';
+            } else if (theme === 'dark') {
+                document.body.style.backgroundColor = '#333';
+                document.body.style.color = '#f4f4f4';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const video = document.getElementById('video');
+
+            // Access the webcam stream
+            if (navigator.mediaDevices.getUserMedia) {
+                navigator.mediaDevices.getUserMedia({ video: true })
+                    .then(stream => {
+                        video.srcObject = stream;
+                    })
+                    .catch(error => {
+                        console.error("Error accessing the webcam", error);
+                    });
+            }
+        });
+    </script>
+</body>
+</html>
